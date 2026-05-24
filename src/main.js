@@ -3,30 +3,6 @@ import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion } from "framer-motion";
 
 const h = React.createElement;
-
-const comfortNotes = [
-  "stop being mean to yourself",
-  "you deserve love too",
-  "i haven’t seen u today but i know u look cute",
-  "you deserve the best",
-  "aap overthink bahut karte ho",
-  "drink water pls",
-  "go sleep jas 😭",
-  "you are not hard to care about",
-  "itna mat socha karo apne baare",
-  "your feelings are never “too much”",
-  "being emotional is not a bad thing",
-  "i hope you’re smiling rn",
-  "you deserve softer days too",
-  "aapko har waqt strong rehne ki zarurat nahi hai",
-  "you make people feel comfortable",
-  "stop doubting every good thing 😭",
-  "i’m glad you exist btw",
-  "you are more lovable than you realize",
-  "your brain needs to relax sometimes",
-  "thank you for being in my life",
-];
-
 const likeLines = [
   "the way you say “aap” back",
   "your voice notes",
@@ -552,7 +528,6 @@ function LoadingScreen() {
 
 function GlobalEffects() {
   const [cursor, setCursor] = useState({ x: -100, y: -100 });
-  const [notes, setNotes] = useState([]);
   const [sparkles, setSparkles] = useState([]);
   const [hearts, setHearts] = useState([]);
   const stars = useMemo(
@@ -573,38 +548,6 @@ function GlobalEffects() {
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
 
-  useEffect(() => {
-    const showNote = () => {
-      const ending = document.getElementById("ending");
-      if (ending) {
-        const rect = ending.getBoundingClientRect();
-        const endingIsVisible = rect.top < window.innerHeight * 0.72 && rect.bottom > window.innerHeight * 0.28;
-        if (endingIsVisible) return;
-      }
-
-      const id = crypto.randomUUID();
-      setNotes((current) => {
-        if (current.length > 2) return current;
-        return [
-          ...current,
-          {
-            id,
-            text: randomItem(comfortNotes),
-            left: 8 + Math.random() * 78,
-            top: 12 + Math.random() * 70,
-          },
-        ];
-      });
-      window.setTimeout(() => {
-        setNotes((current) => current.filter((note) => note.id !== id));
-      }, 6200);
-    };
-
-    const firstNote = window.setTimeout(showNote, 2600);
-    const noteTimer = window.setInterval(() => {
-      showNote();
-    }, 5600);
-
     const heartTimer = window.setInterval(() => {
       const id = crypto.randomUUID();
       setHearts((current) => [
@@ -617,8 +560,6 @@ function GlobalEffects() {
     }, 7200);
 
     return () => {
-      window.clearTimeout(firstNote);
-      window.clearInterval(noteTimer);
       window.clearInterval(heartTimer);
     };
   }, []);
@@ -660,25 +601,11 @@ function GlobalEffects() {
         }),
       ),
     ),
+
     h(
-      AnimatePresence,
-      null,
-      notes.map((note) =>
-        h(
-          motion.div,
-          {
-            key: note.id,
-            className: "comfort-note",
-            initial: { opacity: 0, y: 12, scale: 0.96 },
-            animate: { opacity: 1, y: 0, scale: 1 },
-            exit: { opacity: 0, y: -12, scale: 0.98 },
-            transition: { duration: 1.1 },
-            style: { left: `${note.left}%`, top: `${note.top}%` },
-          },
-          note.text,
-        ),
-      ),
-      sparkles.map((sparkle) =>
+  AnimatePresence,
+  null,
+  sparkles.map((sparkle) =>
         h("span", {
           key: sparkle.id,
           className: "click-sparkle",
